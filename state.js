@@ -1,7 +1,7 @@
-import { savedMaps } from './data';
+import { map1 } from './data';
 
 export const state = {
-  selectedMapId: 0,
+  selectedMap: map1.map,
   placedLights: [],
   success: false,
   error: false,

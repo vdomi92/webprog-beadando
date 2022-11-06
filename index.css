@@ -40,3 +40,10 @@ table {
 #right_control_panel {
   flex-grow: 1;
 }
+
+.gameCell {
+  width: 20px;
+  height: 20px;
+  color: white;
+  text-align: center;
+}
