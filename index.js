@@ -3,7 +3,7 @@ import {
   playButton,
   createButton,
   saveButton,
-  gameField,
+  gameFieldContainer,
 } from './references.js';
 
 //States:
@@ -14,10 +14,33 @@ let success = false;
 
 //Events:
 playButton.addEventListener('click', () => onPlayButtonClick());
-
 const onPlayButtonClick = () => {
-  gameField.innerHTML = renderMap(selectedMap);
-  console.log(selectedMap);
+  gameFieldContainer.innerHTML = renderMap(selectedMap);
+};
+
+const getIndexes = (e) => {};
+
+gameFieldContainer.addEventListener('click', (e) => onGameCellClick(e));
+const onGameCellClick = (e) => {
+  if (!e.target.matches('.white')) {
+    console.log('bad target');
+    return;
+  } else {
+    if (e.target.innerHTML == lightbulb) {
+      e.target.innerHTML = '';
+      const indexOfObject = palcedLights.findIndex((element) => {
+        return (
+          element[0] === e.target.parentElement.rowIndex &&
+          element[1] === e.target.cellIndex
+        );
+      });
+      palcedLights.splice(indexOfObject, 1);
+    } else {
+      e.target.innerHTML = lightbulb;
+      const newLamp = [e.target.parentElement.rowIndex, e.target.cellIndex];
+      palcedLights.push(newLamp);
+    }
+  }
 };
 
 //Templates:
@@ -32,7 +55,7 @@ const renderRow = (gameRow) => {
 };
 
 const renderCell = (gameCell) => {
-  return `<td class="gameCell" style="background-color:${
+  return `<td class="gameCell ${gameCell.type}" style="background-color:${
     gameCell.type
   }">${renderNumber(gameCell)}</td>`;
 };
