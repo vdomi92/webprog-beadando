@@ -1,5 +1,7 @@
-export const renderMap = (gameMap) => {
-  return `<table id="game_field">${renderRow}</table>`;
+export const renderMap = (map) => {
+  return `<table id="game_field">${map
+    .map((elem) => renderRow(elem))
+    .join('\n')}</table>`;
 };
 
 const renderRow = (gameRow) => {
@@ -7,7 +9,30 @@ const renderRow = (gameRow) => {
 };
 
 const renderCell = (gameCell) => {
-  return `<td>${gameCell}</td>`;
+  if (gameCell.type === 'lightBulb') {
+    return `<td class="gameCell ${
+      gameCell.type
+    }" style="background-color:yellow" >${renderNumber(gameCell)}</td>`;
+  } else {
+    return `<td class="gameCell ${gameCell.type}" style="background-color:${
+      gameCell.type
+    }">${renderNumber(gameCell)}</td>`;
+  }
 };
 
-const fullRender = (map1) => {};
+const renderNumber = (gameCell) => {
+  if (gameCell.type === 'white') {
+    return '';
+  }
+  if (gameCell.type === 'black') {
+    return `${gameCell.level}`;
+  }
+  if (gameCell.type === 'yellow') {
+    return '';
+  }
+  if (gameCell.type === 'lightBulb') {
+    return `${lightbulb}`;
+  }
+};
+
+const lightbulb = '💡';

@@ -42,8 +42,8 @@ export const lb = {
   level: 1,
   type: 'lightBulb'
 }
-export const map1 = {
-    name: 'easy_map1',
+const map0 = {
+    name: 'beginner_map1',
     map: [
           [w0, w0, w0, b1, w0, w0, w0],
           [w0, b0, w0, w0, w0, b2, w0],
@@ -56,3 +56,5 @@ export const map1 = {
     rows: 7,
     cols: 7,
   };
+
+  export const maps = [map0,/*map1, map2 */];
