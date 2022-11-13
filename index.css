@@ -20,7 +20,12 @@ td {
 table {
   border-collapse: collapse;
 }
-
+.error_cell {
+  border: 1px solid red;
+}
+.matching_cell {
+  border: 1px solid green;
+}
 #saved_map_selector {
   display: flex;
   flex-direction: row;

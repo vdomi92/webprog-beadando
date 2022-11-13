@@ -25,6 +25,9 @@ const renderNumber = (gameCell) => {
     return '';
   }
   if (gameCell.type === 'black') {
+    if (gameCell.level < 0) {
+      return ' ';
+    }
     return `${gameCell.level}`;
   }
   if (gameCell.type === 'yellow') {

@@ -23,7 +23,7 @@ export const b4 = {
   type: 'black',
 };
 export const b5 = {
-  level: '',
+  level: -1,
   type: 'black',
 };
 export const l1 = {

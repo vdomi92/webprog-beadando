@@ -15,14 +15,17 @@ const onPlayButtonClick = () => {
   //currentMap = deepClone(selectedMapObject.map);
   currentMap = [...selectedMapObject.map];
   gameFieldContainer.innerHTML = renderMap(currentMap);
+  let something = checkBlackBulbCounters(currentMap);
 };
 
 gameFieldContainer.addEventListener('click', (e) => onGameCellClick(e));
 const onGameCellClick = (e) => {
-  let rowIndex = e.target.parentElement.rowIndex;
-  let cellIndex = e.target.cellIndex;
-  let target = currentMap[rowIndex][cellIndex];
-  lightBulbAction(target, rowIndex, cellIndex);
+  if (canPlay === true) {
+    let rowIndex = e.target.parentElement.rowIndex;
+    let cellIndex = e.target.cellIndex;
+    let target = currentMap[rowIndex][cellIndex];
+    lightBulbAction(target, rowIndex, cellIndex);
+  }
 };
 
 selectPlayerButton.addEventListener('click', () =>
@@ -34,6 +37,7 @@ let selectedMapObject;
 let currentMap;
 let error = false;
 let success = false;
+let canPlay = true;
 
 //Utilities
 const deepClone = (obj) => {
@@ -52,6 +56,7 @@ const deepClone = (obj) => {
 };
 
 const lightBulbAction = (target, rowIndex, cellIndex) => {
+  canPlay = false;
   if (
     target.type != 'black' &&
     target.type != 'lightBulb' &&
@@ -61,13 +66,13 @@ const lightBulbAction = (target, rowIndex, cellIndex) => {
     gameFieldContainer.innerHTML = renderMap(currentMap);
     setTimeout(() => {
       letThereBeLight(rowIndex, cellIndex);
-    }, '500');
+    }, '200');
   } else if (target.type == 'lightBulb') {
     removeLightBulb(rowIndex, cellIndex);
     gameFieldContainer.innerHTML = renderMap(currentMap);
     setTimeout(() => {
       letThereBeDarkness(rowIndex, cellIndex);
-    }, '500');
+    }, '200');
   }
 };
 
@@ -86,11 +91,26 @@ const letThereBeLight = (rowIndex, cellIndex) => {
   if (rowIndex < selectedMapObject.rows - 1) lightDown(rowIndex + 1, cellIndex);
 };
 const letThereBeDarkness = (rowIndex, cellIndex) => {
-  if (rowIndex > 0) darkUp(rowIndex - 1, cellIndex);
-  if (cellIndex > 0) darkLeft(rowIndex, cellIndex - 1);
-  if (cellIndex < selectedMapObject.cols - 1)
+  if (rowIndex > 0) {
+    darkUp(rowIndex - 1, cellIndex);
+  } else {
+    canPlay = true;
+  }
+  if (cellIndex > 0) {
+    darkLeft(rowIndex, cellIndex - 1);
+  } else {
+    canPlay = true;
+  }
+  if (cellIndex < selectedMapObject.cols - 1) {
     darkRight(rowIndex, cellIndex + 1);
-  if (rowIndex < selectedMapObject.rows - 1) darkDown(rowIndex + 1, cellIndex);
+  } else {
+    canPlay = true;
+  }
+  if (rowIndex < selectedMapObject.rows - 1) {
+    darkDown(rowIndex + 1, cellIndex);
+  } else {
+    canPlay = true;
+  }
 };
 
 const darkUp = (rowIndex, cellIndex) => {
@@ -102,7 +122,7 @@ const darkUp = (rowIndex, cellIndex) => {
     if (rowIndex > 0) {
       setTimeout(() => {
         darkUp(rowIndex - 1, cellIndex);
-      }, '200');
+      }, '70');
     }
   }
 };
@@ -115,7 +135,7 @@ const darkLeft = (rowIndex, cellIndex) => {
   if (cellIndex > 0) {
     setTimeout(() => {
       darkLeft(rowIndex, cellIndex - 1);
-    }, '200');
+    }, '70');
   }
 };
 const darkRight = (rowIndex, cellIndex) => {
@@ -127,7 +147,7 @@ const darkRight = (rowIndex, cellIndex) => {
   if (cellIndex < selectedMapObject.cols - 1) {
     setTimeout(() => {
       darkRight(rowIndex, cellIndex + 1);
-    }, '200');
+    }, '70');
   }
 };
 const darkDown = (rowIndex, cellIndex) => {
@@ -138,57 +158,73 @@ const darkDown = (rowIndex, cellIndex) => {
   gameFieldContainer.innerHTML = renderMap(currentMap);
   if (rowIndex < selectedMapObject.rows - 1) {
     setTimeout(() => {
-      darkDown(rowIndex + 1, cellIndex);
-    }, '200');
+      darkDown(rowIndex + 1, cellIndex, lastCall);
+    }, '70');
   }
 };
 
 const lightUp = (rowIndex, cellIndex) => {
   if (currentMap[rowIndex][cellIndex].type === 'black') {
+    canPlay = true;
     return;
   }
   changeLightFields(rowIndex, cellIndex);
   gameFieldContainer.innerHTML = renderMap(currentMap);
+  if (rowIndex === 0) {
+    canPlay = true;
+  }
   if (rowIndex > 0) {
     setTimeout(() => {
       lightUp(rowIndex - 1, cellIndex);
-    }, '500');
+    }, '70');
   }
 };
 const lightLeft = (rowIndex, cellIndex) => {
   if (currentMap[rowIndex][cellIndex].type === 'black') {
+    canPlay = true;
     return;
   }
   changeLightFields(rowIndex, cellIndex);
   gameFieldContainer.innerHTML = renderMap(currentMap);
+  if (cellIndex === 0) {
+    canPlay = true;
+  }
   if (cellIndex > 0) {
     setTimeout(() => {
       lightLeft(rowIndex, cellIndex - 1);
-    }, '500');
+    }, '70');
   }
 };
 const lightRight = (rowIndex, cellIndex) => {
   if (currentMap[rowIndex][cellIndex].type === 'black') {
+    canPlay = true;
     return;
   }
   changeLightFields(rowIndex, cellIndex);
   gameFieldContainer.innerHTML = renderMap(currentMap);
+  if (cellIndex === selectedMapObject.cols - 1) {
+    canPlay = true;
+  }
   if (cellIndex < selectedMapObject.cols - 1) {
     setTimeout(() => {
       lightRight(rowIndex, cellIndex + 1);
-    }, '500');
+    }, '70');
   }
 };
 const lightDown = (rowIndex, cellIndex) => {
   if (currentMap[rowIndex][cellIndex].type === 'black') {
+    canPlay = true;
     return;
   }
   changeLightFields(rowIndex, cellIndex);
   gameFieldContainer.innerHTML = renderMap(currentMap);
+  if (rowIndex === selectedMapObject.rows - 1) {
+    canPlay = true;
+  }
   if (rowIndex < selectedMapObject.rows - 1) {
     setTimeout(() => {
       lightDown(rowIndex + 1, cellIndex);
-    }, '500');
+    }, '70');
   }
 };
 
@@ -230,6 +266,23 @@ const changeDarkFields = (rowIndex, cellIndex) => {
   }
 };
 
+const checkBlackBulbCounters = (currentMap) => {
+  let blacks = [];
+  for (let i = 0; i < currentMap.length; i++) {
+    for (let j = 0; j < currentMap[i].length; j++) {
+      console.log('i:', i, ' j: ', j);
+      console.log(currentMap[i][j]);
+      let bulbCount = 0;
+      if (currentMap[i][j].type == 'black' && currentMap[i][j].level >= 0) {
+        let bulbValue = currentMap[i][j].level;
+        let bulbCount = getNeighBours(i, j);
+        blacks.push([i, j, bulbCount, bulbValue]);
+      }
+    }
+  }
+  return blacks;
+};
 //Templates:
 
 //Icons:
+const getNeighBours = (rowIndex, cellIndex) => {};
