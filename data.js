@@ -31,17 +31,11 @@ export const l1 = {
   level: 1,
   type: 'yellow'
 }
-export const l2 = {
-  level: 2,
-  type: 'yellow'
-}
-export const l3 = {
-  level: 3,
-  type: 'yellow'
-}
+
 export const lb = {
   level: 1,
-  type: 'lightBulb'
+  type: 'lightBulb',
+  bulbState: 'ok'
 }
 const map0 = {
     name: 'beginner_map1',

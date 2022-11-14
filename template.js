@@ -14,15 +14,18 @@ const renderCell = (gameCell) => {
       gameCell.type
     }" style="background-color:yellow" >${renderNumber(gameCell)}</td>`;
   } else if (gameCell.type === "black") {
-    let newBorder;
-    if (gameCell.border === undefined) {
-      newBorder = "black";
-    } else {
-      newBorder = gameCell.border;
+    //level
+    //type
+    //bulbCount
+    let bulbState = "black";
+    if (gameCell.bulbCount > gameCell.level && gameCell.level !== -1) {
+      bulbState = "red";
+    } else if (gameCell.bulbCount === gameCell.level && gameCell.level !== -1) {
+      bulbState = "green";
     }
     return `<td class="gameCell ${gameCell.type}" style="background-color:${
       gameCell.type
-    }; border: 3px solid ${newBorder}">${renderNumber(gameCell)}</td>`;
+    }; border: 3px solid ${bulbState}">${renderNumber(gameCell)}</td>`;
   } else {
     return `<td class="gameCell ${gameCell.type}" style="background-color:${
       gameCell.type

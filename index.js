@@ -1,4 +1,4 @@
-import { maps, w0, b0, b1, b2, b3, b4, b5, l1, l2, l3, lb } from "./data.js";
+import { maps, w0, b0, b1, b2, b3, b4, b5, l1, lb } from "./data.js";
 import { renderMap } from "./template.js";
 import {
   playButton,
@@ -12,7 +12,6 @@ import {
 playButton.addEventListener("click", () => onPlayButtonClick());
 const onPlayButtonClick = () => {
   selectedMapObject = maps[selectedMapIndex];
-  //currentMap = deepClone(selectedMapObject.map);
   currentMap = [...selectedMapObject.map];
   setBlockState(checkBlackBulbCounters(currentMap));
   gameFieldContainer.innerHTML = renderMap(currentMap);
@@ -43,13 +42,8 @@ let canPlay = true;
 //Utilities
 
 const lightBulbAction = (target, rowIndex, cellIndex) => {
-  if (
-    target.type != "black" &&
-    target.type != "lightBulb" &&
-    target.type != "yellow"
-  ) {
+  if (target.type != "black" && target.type != "lightBulb") {
     addLightBulb(rowIndex, cellIndex);
-
     gameFieldContainer.innerHTML = renderMap(currentMap);
     setTimeout(() => {
       letThereBeLight(rowIndex, cellIndex);
@@ -64,14 +58,15 @@ const lightBulbAction = (target, rowIndex, cellIndex) => {
   blockStates = checkBlackBulbCounters(currentMap);
   setBlockState(blockStates);
   gameFieldContainer.innerHTML = renderMap(currentMap);
-  console.log(blockStates);
 };
 
 const addLightBulb = (rowIndex, cellIndex) => {
-  currentMap[rowIndex][cellIndex] = lb;
+  let prevField = { ...currentMap[rowIndex][cellIndex] };
+  currentMap[rowIndex][cellIndex] = { ...lb, prevState: prevField };
 };
 const removeLightBulb = (rowIndex, cellIndex) => {
-  currentMap[rowIndex][cellIndex] = w0;
+  let prevState = currentMap[rowIndex][cellIndex].prevState;
+  currentMap[rowIndex][cellIndex] = prevState;
 };
 
 const letThereBeLight = (rowIndex, cellIndex) => {
@@ -200,40 +195,35 @@ const lightDown = (rowIndex, cellIndex) => {
 };
 
 const changeLightFields = (rowIndex, cellIndex) => {
-  if (JSON.stringify(currentMap[rowIndex][cellIndex]) === JSON.stringify(lb)) {
-    error = true;
+  if (currentMap[rowIndex][cellIndex].type === lb.type) {
+    currentMap[rowIndex][cellIndex] = {
+      ...currentMap[rowIndex][cellIndex],
+    };
+    currentMap[rowIndex][cellIndex].bulbState = "error";
     console.log("lightbulb hit with light");
   }
-  if (JSON.stringify(currentMap[rowIndex][cellIndex]) === JSON.stringify(w0)) {
+  if (currentMap[rowIndex][cellIndex].type === w0.type) {
     currentMap[rowIndex][cellIndex] = l1;
-  } else if (
-    JSON.stringify(currentMap[rowIndex][cellIndex]) === JSON.stringify(l1)
-  ) {
-    currentMap[rowIndex][cellIndex] = l2;
-  } else if (
-    JSON.stringify(currentMap[rowIndex][cellIndex]) === JSON.stringify(l2)
-  ) {
-    currentMap[rowIndex][cellIndex] = l3;
-    error = true;
+  } else if (currentMap[rowIndex][cellIndex].type === l1.type) {
+    let newObj = { ...currentMap[rowIndex][cellIndex] };
+    newObj.level += 1;
+    currentMap[rowIndex][cellIndex] = newObj;
   }
 };
 
 const changeDarkFields = (rowIndex, cellIndex) => {
-  if (JSON.stringify(currentMap[rowIndex][cellIndex]) === JSON.stringify(l1)) {
-    currentMap[rowIndex][cellIndex] = w0;
-  } else if (
-    JSON.stringify(currentMap[rowIndex][cellIndex]) === JSON.stringify(l2)
-  ) {
-    currentMap[rowIndex][cellIndex] = l1;
-  } else if (
-    JSON.stringify(currentMap[rowIndex][cellIndex]) === JSON.stringify(l3)
-  ) {
-    currentMap[rowIndex][cellIndex] = l2;
-    //   error = true; count -1
-  } else if (
-    JSON.stringify(currentMap[rowIndex][cellIndex]) === JSON.stringify(lb)
+  if (
+    currentMap[rowIndex][cellIndex].type === l1.type &&
+    currentMap[rowIndex][cellIndex].level === 1
   ) {
     currentMap[rowIndex][cellIndex] = w0;
+  } else if (
+    currentMap[rowIndex][cellIndex].type === l1.type &&
+    currentMap[rowIndex][cellIndex].level > 1
+  ) {
+    let newObj = { ...currentMap[rowIndex][cellIndex] };
+    newObj.level -= 1;
+    currentMap[rowIndex][cellIndex] = newObj;
   }
 };
 
@@ -243,8 +233,7 @@ const checkBlackBulbCounters = (currentMap) => {
     for (let j = 0; j < selectedMapObject.cols; j++) {
       if (currentMap[i][j].type == "black" && currentMap[i][j].level >= 0) {
         let bulbCount = getNeighbours(i, j);
-        let bulbValue = currentMap[i][j].level;
-        blacks.push([i, j, bulbValue, bulbCount]);
+        blacks.push([i, j, bulbCount]);
       }
     }
   }
@@ -255,11 +244,9 @@ const setBlockState = (blockStates) => {
   blockStates.map((e) => {
     let rowIndex = e[0];
     let cellIndex = e[1];
-    let bulbValue = e[2];
-    let bulbCount = e[3];
+    let bulbCount = e[2];
     currentMap[rowIndex][cellIndex] = {
       ...currentMap[rowIndex][cellIndex],
-      bulbValue: bulbValue,
       bulbCount: bulbCount,
     };
   });
