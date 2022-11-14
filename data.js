@@ -9,6 +9,7 @@ export const b0 = {
 export const b1 = {
   level: 1,
   type: 'black',
+  border: 'black',
 };
 export const b2 = {
   level: 2,

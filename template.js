@@ -1,18 +1,28 @@
 export const renderMap = (map) => {
   return `<table id="game_field">${map
     .map((elem) => renderRow(elem))
-    .join('\n')}</table>`;
+    .join("\n")}</table>`;
 };
 
 const renderRow = (gameRow) => {
-  return `<tr>${gameRow.map(renderCell).join('\n')}</tr>`;
+  return `<tr>${gameRow.map(renderCell).join("\n")}</tr>`;
 };
 
 const renderCell = (gameCell) => {
-  if (gameCell.type === 'lightBulb') {
+  if (gameCell.type === "lightBulb") {
     return `<td class="gameCell ${
       gameCell.type
     }" style="background-color:yellow" >${renderNumber(gameCell)}</td>`;
+  } else if (gameCell.type === "black") {
+    let newBorder;
+    if (gameCell.border === undefined) {
+      newBorder = "black";
+    } else {
+      newBorder = gameCell.border;
+    }
+    return `<td class="gameCell ${gameCell.type}" style="background-color:${
+      gameCell.type
+    }; border: 3px solid ${newBorder}">${renderNumber(gameCell)}</td>`;
   } else {
     return `<td class="gameCell ${gameCell.type}" style="background-color:${
       gameCell.type
@@ -21,21 +31,21 @@ const renderCell = (gameCell) => {
 };
 
 const renderNumber = (gameCell) => {
-  if (gameCell.type === 'white') {
-    return '';
+  if (gameCell.type === "white") {
+    return "";
   }
-  if (gameCell.type === 'black') {
+  if (gameCell.type === "black") {
     if (gameCell.level < 0) {
-      return ' ';
+      return " ";
     }
     return `${gameCell.level}`;
   }
-  if (gameCell.type === 'yellow') {
-    return '';
+  if (gameCell.type === "yellow") {
+    return "";
   }
-  if (gameCell.type === 'lightBulb') {
+  if (gameCell.type === "lightBulb") {
     return `${lightbulb}`;
   }
 };
 
-const lightbulb = '💡';
+const lightbulb = "💡";
