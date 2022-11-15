@@ -1,8 +1,6 @@
 export const w0 = {
   level: 0,
-  type: 'field',
-  hasBulb: false,
-  hasBulbError: false,
+  type: 'white',
 };
 export const b0 = {
   level: 0,
@@ -11,6 +9,7 @@ export const b0 = {
 export const b1 = {
   level: 1,
   type: 'black',
+  border: 'black',
 };
 export const b2 = {
   level: 2,
@@ -28,7 +27,16 @@ export const b5 = {
   level: -1,
   type: 'black',
 };
+export const l1 = {
+  level: 1,
+  type: 'yellow'
+}
 
+export const lb = {
+  level: 1,
+  type: 'lightBulb',
+  bulbState: 'ok'
+}
 const map0 = {
     name: 'beginner_map1',
     map: [
